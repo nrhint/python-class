@@ -1,0 +1,3 @@
+weight = 115
+
+print(weight * 0.165)
