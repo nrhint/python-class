@@ -1,0 +1,8 @@
+import turtle
+
+t = turtle
+
+a = t.pen()
+b = t.pen()
+c = t.pen()
+d = t.pen()

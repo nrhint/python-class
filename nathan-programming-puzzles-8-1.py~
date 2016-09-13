@@ -1,0 +1,17 @@
+from random import choice
+
+class giraffe:
+    def __init__(self):
+        comands = [lFF, rFF, lFB, rFB]
+        print("comands: lFF, rFF, lFB, rFB, dance")
+    def lFF(self):
+        print("Left foot foward")
+    def rFF(self):
+        print("Right foot foward")
+    def lFB(self):
+        print("Left foot back")
+    def rFB(self):
+        print("Right foot back")
+    def dance(self):
+        choice = choice(comands)
+        self.choice
