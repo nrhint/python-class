@@ -1,6 +1,7 @@
 #final assingment
 """
-fix the end of the game.  Make the player stop when end point is reached
+make it so that when you land on a platform you dont fall through
+make a proper eng of game
 """
 
 from tkinter import *
@@ -30,7 +31,7 @@ def collide(player, spriteList):
 def endGame(endCoords):
     playerPos = coords(player)
     endPos = endCoords
-    if playerPos[0] > endPos:
+    if playerPos[0] >= endPos:
         return True
     return False
 class Player:
@@ -43,14 +44,28 @@ class Player:
         self.x = 1
         self.y = 0
         self.run = True
+        self.timer = -1
         self.canvas.bind_all('<KeyPress-Up>', self.jump)
     def draw(self):
-        self.canvas.move(self.id, self.x, self.y)
+        
+        if self.timer >= 0:
+            self.timer = self.timer + 1
+        if self.timer > 10:
+            self.y = 2
+            if self.timer > 20:
+                self.y = 0
+                self.timer = -1
+        
         if collide(self, sprites) == True:
             self.run = False
+        self.canvas.move(self.id, self.x, self.y)
         #pass
     def jump(self, evt):
-        self.y = -3
+        if self.timer >= 0:
+            pass
+        else:
+            self.y = -2
+            self.timer = 0
 class Plat:
     def __init__(self, canvas, x, y):
         self.canvas = canvas
@@ -67,9 +82,9 @@ class Pit:
 #create sprites
 player = Player(canvas, 'red')
 #level 1
-plat1 = Plat(canvas, 100, 100)
-pit1 = Pit(canvas, 100)
-sprites = [plat1, pit1]
+plat0 = Plat(canvas, 100, 195)
+pit0 = Pit(canvas, 100)
+sprites = [pit0, plat0]
 endCoords = 200
 
 tk.update_idletasks()
@@ -78,10 +93,12 @@ time.sleep(1)
 while run == True:
     if player.run == False:
         run = False
-    if endGame == True:
+    if endGame(endCoords) == True:
         run = False
     #update sprites/main loop
     player.draw()
     tk.update_idletasks()
     tk.update()
     time.sleep(0.01)
+
+canvas.create_text(100, 100, text = "I WIN")
