@@ -1,7 +1,7 @@
 #final assingment
 """
-make it so that when you land on a platform you dont fall through
-make a proper eng of game
+make it so that when you land on a platform you dont fall through.
+make a proper end of game.
 """
 
 from tkinter import *
@@ -10,6 +10,8 @@ import time
 tk = Tk()
 canvas = Canvas(tk, width = 1200, height = 200)
 run = True
+win = None
+quitGame = False
 
 tk.title("Final Assingment")
 
@@ -20,8 +22,16 @@ tk.update()
 def coords(sprite):
     pos = sprite.canvas.coords(sprite.id)
     return pos
-def collide(player, spriteList):
-    for sprite in spriteList:
+def collideWithPlat(player, platSpriteList):
+    for sprite in platSpriteList:
+        playerPos = coords(player)
+        spritePos = coords(sprite)
+        if playerPos[2] >= spritePos[0] and playerPos[0] <= spritePos[2]:
+            if playerPos[3] >= spritePos[1] and playerPos[3] <= sprite[3]:
+                return True
+        return False
+def collideWithPit(player, pitSpriteList):
+    for sprite in pitSpriteList:
         playerPos = coords(player)
         spritePos = coords(sprite)
         if playerPos[2] >= spritePos[0] and playerPos[0] <= spritePos[2]:
@@ -41,7 +51,7 @@ class Player:
         self.canvas.move(self.id, -190, 0)
         self.canvasWidth = 1200
         self.canvasHeight = 200
-        self.x = 1
+        self.x = 1.4
         self.y = 0
         self.run = True
         self.timer = -1
@@ -50,14 +60,16 @@ class Player:
         
         if self.timer >= 0:
             self.timer = self.timer + 1
-        if self.timer > 10:
+        if self.timer > 12:
             self.y = 2
-            if self.timer > 20:
+            if self.timer > 24:
                 self.y = 0
                 self.timer = -1
         
-        if collide(self, sprites) == True:
+        if collideWithPit(self, pitSprites) == True:
             self.run = False
+        if collideWithPlat(self, platSprites) == True:
+            self.y = 0
         self.canvas.move(self.id, self.x, self.y)
         #pass
     def jump(self, evt):
@@ -70,7 +82,6 @@ class Plat:
     def __init__(self, canvas, x, y):
         self.canvas = canvas
         self.id = self.canvas.create_polygon((x,y), (x+25, y), (x+25, y+3), (x, y+3),  fill = 'green')
-        #self.canvas.move(self.id, 50, 50)
         self.canvasWidth = 1200
         self.canvasHeight = 200
 class Pit:
@@ -79,26 +90,31 @@ class Pit:
         y = 199
         self.id = self.canvas.create_polygon((x, y), (x+15, y), (x+15, y+10), (x, y+10), fill = 'purple')
 
-#create sprites
-player = Player(canvas, 'red')
-#level 1
-plat0 = Plat(canvas, 100, 195)
-pit0 = Pit(canvas, 100)
-sprites = [pit0, plat0]
-endCoords = 200
+while quitGame == False:
+    #create sprites
+    player = Player(canvas, 'red')
+    #level 1
+#    plat0 = Plat(canvas, 15, 195)
+#    plat1 = Plat(canvas, 55, 190)
+    pit0 = Pit(canvas, 100)
+    pitSprites = [pit0]
+    platSprites = []#plat0, plat1]
+    endCoords = 200
 
-tk.update_idletasks()
-tk.update()
-time.sleep(1)
-while run == True:
-    if player.run == False:
-        run = False
-    if endGame(endCoords) == True:
-        run = False
-    #update sprites/main loop
-    player.draw()
     tk.update_idletasks()
     tk.update()
-    time.sleep(0.01)
-
-canvas.create_text(100, 100, text = "I WIN")
+    time.sleep(0.5)
+    while run == True:
+        #update sprites/main loop
+        player.draw()
+        if player.run == False:
+            run = False
+        if endGame(endCoords) == True:
+            run = False
+            win = True
+        tk.update_idletasks()
+        tk.update()
+        time.sleep(0.01)
+    if win == True:
+        canvas.create_text(100, 100, text = "You WIN")
+        quitGame = True
